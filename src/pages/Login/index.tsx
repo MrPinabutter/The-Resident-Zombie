@@ -11,8 +11,9 @@ import styles from './styles'
 
 export default function Landing(){
   const { navigate } = useNavigation()
-  function handleNavigationToLanding(){
-    navigate('Landing')
+
+  function handleNavigationToRegister(){
+    navigate('Register')
   }
 
   return(
@@ -27,7 +28,7 @@ export default function Landing(){
         <Image source={logo} style={{width: 253.22, height: 91 }} />
         <Text style={styles.logoText}>Survive with us</Text>
       </View>
-      <RectButton style={styles.button} onPress={handleNavigationToLanding}>
+      <RectButton style={styles.button} onPress={handleNavigationToRegister}>
         <Text style={styles.buttonText}>Start</Text>
       </RectButton>
     </LinearGradient >
