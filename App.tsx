@@ -1,21 +1,28 @@
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { View, Text } from 'react-native';
+
+import { useFonts, Montserrat_400Regular } from '@expo-google-fonts/montserrat'
+import { Oswald_400Regular } from '@expo-google-fonts/oswald'
+import { Staatliches_400Regular } from '@expo-google-fonts/staatliches'
+
+import AppStack from './src/routes/AppStack'
 
 export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
-}
+  let [fontsLoaded] = useFonts({
+    Montserrat_400Regular,
+    Oswald_400Regular,
+    Staatliches_400Regular
+  });
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+  if (!fontsLoaded) {
+    return <View><Text>Oi</Text></View>;
+  } else {
+    return (
+      <>
+        <StatusBar style="dark"/>
+        <AppStack />
+      </>
+    );
+  }
+}
