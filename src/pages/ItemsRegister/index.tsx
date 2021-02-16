@@ -1,26 +1,50 @@
-import { Staatliches_400Regular } from '@expo-google-fonts/staatliches';
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, Dimensions } from 'react-native';
 import { RectButton, ScrollView, TextInput } from 'react-native-gesture-handler';
+import { Picker } from '@react-native-community/picker'
+
+import styles from './styles'
 
 export default function ItemsRegister(){
+  const [selectedItem, setSelectedItem] = useState<any>('AK47')
+  const [amountItems, setAmountItems] = useState('1')
+  const [items] = useState(['Fiji Watter', 'First Aid Pouch', 'AK47', 'Campbell Soup'])
+
   return(
-    <View style={{flex: 1, backgroundColor: '#E0DB64', alignItems: 'center'}}>
-      <ScrollView style={{width: '100%'}} contentContainerStyle={{alignItems: 'center'}}>
-        <View style={{width: '80%', marginTop: 60, marginBottom: 50}}>
-          <Text style={{fontFamily: 'Staatliches_400Regular', fontSize: 36, color: '#25005E'}}>Let's get started</Text>
-          <Text style={{fontFamily: 'Montserrat_400Regular', fontSize: 24, color: '#6518D8'}}>Now add your items in {'\n'}the app</Text>
+    <View style={styles.container}>
+      <ScrollView style={{width: Dimensions.get('window').width}} contentContainerStyle={{alignItems: 'center'}}>
+        <View style={styles.descriptionContainer}>
+          <Text style={styles.description1}>Let's get started</Text>
+          <Text style={styles.description2}>Now add your items in {'\n'}the app</Text>
         </View>
         
         <View style={{width: '80%', marginTop: 15}}>
-          <Text style={{fontFamily: 'Montserrat_700Bold', fontSize: 18, color: '#27251C'}}>Item</Text>
-          <TextInput style={[styles.textInput, {width: '100%', height: 40, backgroundColor: '#CFC557', borderRadius: 6, marginTop: 5, padding: 10}]} />
+          <Text style={styles.label}>Item</Text>
+
+          <View style={styles.pickerContainer}>
+            <Picker 
+              selectedValue={selectedItem} 
+              onValueChange={itemVal => setSelectedItem(itemVal)} 
+              style={[styles.textInput, styles.picker]}
+            >
+              {items.map((lab) => {
+                return <Picker.Item label={lab} value={lab} key={lab}/>
+              })}
+            </Picker>
+          </View>
         </View>
 
-        <View style={{marginTop: 15, width: '80%', flexDirection: 'row', justifyContent: 'space-between'}}>
-          <View style={{width: '45%'}}>
-            <Text style={{fontFamily: 'Montserrat_700Bold', fontSize: 18, color: '#27251C'}}>Amount</Text>
-            <TextInput style={[styles.textInput, {width: '100%', height: 40, backgroundColor: '#CFC557', borderRadius: 6, marginTop: 5, padding: 10}]} />
+        <View style={styles.amountContainer}>
+          <View style={{width: '60%'}}>
+            <Text style={styles.label}>Amount</Text>
+            <TextInput keyboardType="numeric" value={amountItems} onChangeText={setAmountItems} style={[styles.textInput, styles.amoutInput]} />
+          </View>
+          
+          <View style={{width: '30%', paddingBottom: 10}}>
+            <View style={{height: 22}} />
+            <RectButton style={styles.addButton}>
+              <Text style={[styles.buttonText, {fontSize: 24}]}>Add</Text>
+            </RectButton>
           </View>
         </View>
 
@@ -32,30 +56,3 @@ export default function ItemsRegister(){
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  button:{
-    width: '80%',
-    height: 53,
-    borderRadius:6,
-    backgroundColor: '#B6303D',
-    elevation: 6,
-
-    marginTop: 25,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 60
-  },
-
-  buttonText:{
-    color: '#fff',
-    fontSize: 36,
-    fontFamily: 'Staatliches_400Regular'
-  },
-
-  textInput: {
-    fontFamily: 'Oswald_400Regular',
-    color: '#000',
-    fontSize: 14
-  }
-})
