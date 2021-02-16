@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, Dimensions } from 'react-native';
-import { RectButton, ScrollView, TextInput } from 'react-native-gesture-handler';
+import { RectButton, ScrollView, TextInput, TouchableOpacity } from 'react-native-gesture-handler';
 import { Picker } from '@react-native-community/picker';
 import { Fontisto } from '@expo/vector-icons';
 
 import styles from './styles'
+import { useNavigation } from '@react-navigation/native';
 
 interface CardType {
   [x: string ]: string
@@ -16,12 +17,21 @@ export default function ItemsRegister(){
   const [items] = useState(['Fiji Water', 'First Aid Pouch', 'AK47', 'Campbell Soup']);
   const [itemsCard, setItemsCard] = useState<CardType>({})
 
+  const { navigate } = useNavigation();
+
+  function handleNavigateToLanding(){
+    navigate('Landing')
+  }
+
   function handleAddCardItem(){
     if(!amountItems){
       return alert('Amount invalid')
     }
-
     setItemsCard({...itemsCard, [selectedItem]: amountItems})
+  }
+
+  function handleRemoveItem(idx: any){
+    setItemsCard({...itemsCard, [idx]: null})
   }
 
   return(
@@ -51,7 +61,16 @@ export default function ItemsRegister(){
         <View style={styles.amountContainer}>
           <View style={{width: '60%'}}>
             <Text style={styles.label}>Amount</Text>
-            <TextInput keyboardType="numeric" value={amountItems} onChangeText={setAmountItems} style={[styles.textInput, styles.amoutInput]} />
+            <TextInput 
+              keyboardType="numeric" 
+              value={amountItems} 
+              onChangeText={amount =>{
+                if(!isNaN(Number(amount))){
+                  setAmountItems(amount)
+                } 
+              }} 
+              style={[styles.textInput, styles.amoutInput]} 
+            />
           </View>
           
           <View style={{width: '30%', paddingBottom: 10}}>
@@ -61,26 +80,26 @@ export default function ItemsRegister(){
             </RectButton>
           </View>
         </View>
-        
-        <View style={{width: Dimensions.get('window').width*0.8, marginTop: 5}}>
-          <Text style={[styles.label, {marginBottom: 10}]}>Your Items</Text>
-          {items.map(i => {
-            if (!!itemsCard[i]){
-              return (
-                <View key={i} style={{width: 'auto', height: 30, backgroundColor: '#A6794F', flexDirection: 'row', alignItems: 'center', marginBottom: 14, elevation: 3, justifyContent: 'space-between'}}>
-                  <View style={{width: 'auto', minWidth: 40, backgroundColor: '#684B2E', height: '100%', alignItems: 'center', justifyContent: 'center', paddingHorizontal: 6}}>
-                    <Text style={{fontFamily: 'Montserrat_700Bold', fontSize: 14, color: '#201F1A'}}>{itemsCard[i]}x</Text>
-                  </View>
-                  <Text style={{fontFamily: 'Staatliches_400Regular', fontSize: 16, color: '#201F1A', paddingHorizontal: 6}}>{i}</Text>
-                  <Fontisto name="close-a" size={12} style={{paddingHorizontal: 10}} color="#201F1A" />
+
+        <Text style={[styles.label, {marginBottom: 10, marginLeft: '10%', alignSelf: 'flex-start'}]}>Your Items</Text>
+        {items.map(i => {
+          if (!!itemsCard[i]){
+            return (
+              <View key={i} style={{height: 30, backgroundColor: '#A6794F', flexDirection: 'row', alignItems: 'center', marginBottom: 14, elevation: 3, justifyContent: 'space-between', marginLeft: '10%', alignSelf: 'flex-start'}}>
+                <View style={{minWidth: 40, backgroundColor: '#684B2E', height: '100%', alignItems: 'center', justifyContent: 'center'}}>
+                  <Text style={{fontFamily: 'Montserrat_700Bold', fontSize: 14, color: '#201F1A', marginHorizontal: 6 }}>{Number(itemsCard[i])}x</Text>
                 </View>
-              )}
-          })}
-        </View>
+                <Text style={{fontFamily: 'Staatliches_400Regular', fontSize: 16, color: '#201F1A', paddingHorizontal: 6}}>{i}</Text>
+                <TouchableOpacity onPress={() => handleRemoveItem(i)}>
+                  <Fontisto name="close-a" size={12} style={{paddingHorizontal: 10}} color="#201F1A" />
+                </TouchableOpacity>
+              </View>
+            )}
+        })}
 
       </ScrollView>
 
-      <RectButton style={styles.button}>
+      <RectButton style={styles.button} onPress={handleNavigateToLanding}>
         <Text style={styles.buttonText}>Finish</Text>
       </RectButton>
     </View>

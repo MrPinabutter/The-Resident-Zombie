@@ -16,7 +16,7 @@ function AppStack() {
         <Screen name="Login" component={Login} />
         <Screen name="Register" component={UserRegister} />
         <Screen name="Items" component={ItemRegister} />
-        <Screen name="Langing" component={Landing} />
+        <Screen name="Landing" component={Landing} />
       </Navigator>
     </NavigationContainer> 
   );

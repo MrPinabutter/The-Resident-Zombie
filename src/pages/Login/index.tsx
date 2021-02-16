@@ -1,5 +1,5 @@
 import React from 'react'
-import { View, Text, StyleSheet, Image } from 'react-native'
+import { View, Text, StyleSheet, Image, Dimensions } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient'
 import { RectButton, TextInput } from 'react-native-gesture-handler'
 import { useNavigation } from '@react-navigation/native'
@@ -23,7 +23,7 @@ export default function Landing(){
       start={{x:0,y:0}}
 	    end={{x:1,y:1}}
     >
-      <Image source={cros} style={{width: '100%', height: '90%', position: 'absolute', bottom: 0}} />
+      <Image source={cros} style={{width: '100%', height: Dimensions.get('window').width*1674/1125, position: 'absolute', bottom: 0}} />
       <View style={styles.logo}>
         <Image source={logo} style={{width: 253.22, height: 91 }} />
         <Text style={styles.logoText}>Survive with us</Text>
