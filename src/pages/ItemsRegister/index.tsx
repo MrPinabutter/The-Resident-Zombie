@@ -1,15 +1,16 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { View, Text, Dimensions } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { RectButton, ScrollView, TextInput, TouchableOpacity } from 'react-native-gesture-handler';
 import { Picker } from '@react-native-community/picker';
 import { Fontisto } from '@expo/vector-icons';
 
-import { useAsyncStorage } from '@react-native-async-storage/async-storage';
+import AsyncStorage, { useAsyncStorage } from '@react-native-async-storage/async-storage';
 
 import styles from './styles'
 
 import api from '../../services/api'
+import AuthContext from '../../contexts/auth';
 
 interface ParamProps {
   name: string | undefined,
@@ -31,9 +32,18 @@ export default function ItemsRegister(){
   const [items] = useState(['Fiji Water', 'First Aid Pouch', 'AK47', 'Campbell Soup']);
   const [itemsCard, setItemsCard] = useState<CardType>({})
 
-  const { navigate } = useNavigation();
+  const {getData} = useContext(AuthContext)
   
   const { name, age, gender, location }: any = useRoute().params;
+
+  async function saveLocal(id: string) {
+    try {
+      await AsyncStorage.setItem('USER_ID', id);
+
+    } catch(e) {
+      console.log(e);
+    }
+  }
   
   function handleSubmit(){
     const paramsURl = new URLSearchParams() 
@@ -47,16 +57,14 @@ export default function ItemsRegister(){
       `Campbell Soup:${itemsCard['Campbell Soup'] ? itemsCard['Campbell Soup'] : 0}`
     )
 
-    api.post('/api/people.json', paramsURl).then(() => {
+    api.post('/api/people.json', paramsURl).then((e) => {
       console.log("Survivor Created");
-      handleNavigateToLanding()
+      saveLocal(e.data.id)
+    }).then(() => {
+      getData()
     }).catch((e) => {
       console.log("Error", e);
     })
-  }
-
-  function handleNavigateToLanding(){
-    navigate('Landing')
   }
 
   function handleAddCardItem(){

@@ -11,6 +11,7 @@ import styles from './styles';
 
 import QRCode from 'react-native-qrcode-svg';
 import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function Landing(){
   const [isVisible, setVisible] = useState(false)
@@ -22,8 +23,10 @@ export default function Landing(){
   }
 
   function handleNavigateToQrScanner(){
+    AsyncStorage.clear()
     navigate('QrCam')
   }
+
 
   return (
     <View style={styles.container}>
@@ -56,7 +59,8 @@ export default function Landing(){
         isVisible={isVisible}
       >
         <View style={styles.modal}>
-          <Text style={[styles.label, {color: '#25005E', fontSize: 24, paddingLeft: 0, marginBottom: 30}]}>Share to make new Contact</Text>
+          <Text style={[styles.label, {color: '#25005E', fontSize: 24, paddingLeft: 0, marginBottom: 12}]}>Share this code to make friends</Text>
+          <Text style={[styles.label, {color: '#51AB11', fontSize: 16, paddingLeft: 0, marginBottom: 8}]}>#sadfuhasdifuasdfa-nsdfoasjdf-dfdhafo</Text>
           <QRCode
             value="347e9f45-b06a-4083-827d-049058b4b6fe"
             size={200}

@@ -12,7 +12,7 @@ import styles from './styles'
 
 export default function UserRegister(){
   const [name, setName] = useState('');
-  const [gender, setGender] = useState('');
+  const [gender, setGender] = useState('M');
   const [age, setAge] = useState('');
   const [location, setLocation] = useState({latitude: -5.0688843, longitude: -42.7953127});
   const [errorMsg, setErrorMsg] = useState('');
@@ -23,8 +23,6 @@ export default function UserRegister(){
     if(!age || !name || !gender){
       return alert("Missing info")
     }
-    console.log(gender);
-    
     navigate('Items', {name, gender, age, location});
   }
   

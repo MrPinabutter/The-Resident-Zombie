@@ -1,13 +1,14 @@
-import React from 'react'
-import { View, Text, StyleSheet, Image, Dimensions } from 'react-native'
-import { LinearGradient } from 'expo-linear-gradient'
-import { RectButton, TextInput } from 'react-native-gesture-handler'
-import { useNavigation } from '@react-navigation/native'
+import React, { useContext, useEffect } from 'react';
+import { View, Text, Image, Dimensions } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
+import { RectButton } from 'react-native-gesture-handler';
+import { useNavigation } from '@react-navigation/native';
+import AuthContext from '../../contexts/auth';
 
-import cros from '../../assets/images/cross.png'
-import logo from '../../assets/images/logo.png'
+import cros from '../../assets/images/cross.png';
+import logo from '../../assets/images/logo.png';
 
-import styles from './styles'
+import styles from './styles';
 
 export default function Landing(){
   const { navigate } = useNavigation()
@@ -15,6 +16,15 @@ export default function Landing(){
   function handleNavigationToRegister(){
     navigate('Register')
   }
+
+  const { getData } = useContext(AuthContext);
+
+  useEffect(() => {
+    async function loadData() {
+      await getData()
+    } 
+    loadData()
+  }, [])
 
   return(
     <LinearGradient 
