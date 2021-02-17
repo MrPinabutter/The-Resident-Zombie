@@ -96,7 +96,7 @@ export default function FabButton({qrCode, addContact}: FabProp) {
 const styles = StyleSheet.create({
   container: {
     position: 'absolute',
-    bottom: 80,
+    bottom: 110,
     right: 40,
     alignItems: 'center'
   },
