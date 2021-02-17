@@ -1,11 +1,25 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Dimensions } from 'react-native';
+import { View, Text, Dimensions } from 'react-native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { RectButton, ScrollView, TextInput, TouchableOpacity } from 'react-native-gesture-handler';
 import { Picker } from '@react-native-community/picker';
 import { Fontisto } from '@expo/vector-icons';
 
+import { useAsyncStorage } from '@react-native-async-storage/async-storage';
+
 import styles from './styles'
-import { useNavigation } from '@react-navigation/native';
+
+import api from '../../services/api'
+
+interface ParamProps {
+  name: string | undefined,
+  age: string | undefined,
+  gender: string | undefined,
+  location:{
+    latitude: Number | undefined,
+    longitude: Number | undefined
+  }
+}
 
 interface CardType {
   [x: string ]: string
@@ -18,6 +32,28 @@ export default function ItemsRegister(){
   const [itemsCard, setItemsCard] = useState<CardType>({})
 
   const { navigate } = useNavigation();
+  
+  const { name, age, gender, location }: any = useRoute().params;
+  
+  function handleSubmit(){
+    const paramsURl = new URLSearchParams() 
+    paramsURl.append('person[name]', name)
+    paramsURl.append('person[age]', age)
+    paramsURl.append('person[gender]', gender)
+    paramsURl.append('person[lonlat]', `Point(${location.latitude} ${location.longitude})`)
+    paramsURl.append('items', `Fiji Water:${itemsCard['Fiji Water'] ? itemsCard['Fiji Water']: 0 };` + 
+      `First Aid Pouch:${itemsCard['First Aid Pouch'] ? itemsCard['First Aid Pouch'] : 0};` + 
+      `AK47:${itemsCard['AK47'] ? itemsCard['AK47'] : 0};` +
+      `Campbell Soup:${itemsCard['Campbell Soup'] ? itemsCard['Campbell Soup'] : 0}`
+    )
+
+    api.post('/api/people.json', paramsURl).then(() => {
+      console.log("Survivor Created");
+      handleNavigateToLanding()
+    }).catch((e) => {
+      console.log("Error", e);
+    })
+  }
 
   function handleNavigateToLanding(){
     navigate('Landing')
@@ -99,7 +135,7 @@ export default function ItemsRegister(){
 
       </ScrollView>
 
-      <RectButton style={styles.button} onPress={handleNavigateToLanding}>
+      <RectButton style={styles.button} onPress={handleSubmit}>
         <Text style={styles.buttonText}>Finish</Text>
       </RectButton>
     </View>

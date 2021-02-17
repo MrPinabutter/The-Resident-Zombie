@@ -58,7 +58,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#CFC557', 
     borderRadius: 6, 
     marginTop: 5, 
-    padding: 10
+    padding: 10,
+    justifyContent: 'center',
+    alignItems: 'center'
   },
 
   ageText: {

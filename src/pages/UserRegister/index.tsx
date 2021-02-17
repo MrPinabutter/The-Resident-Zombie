@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text } from 'react-native';
 import { RectButton, ScrollView, TextInput } from 'react-native-gesture-handler';
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import mapStyle from '../../assets/map/mapStyle.json'
 import img from '../../assets/icons/marker.png'
 import * as Location from 'expo-location';
+import { Picker } from '@react-native-community/picker';
 
 import styles from './styles'
 
@@ -16,6 +17,17 @@ export default function UserRegister(){
   const [location, setLocation] = useState({latitude: -5.0688843, longitude: -42.7953127});
   const [errorMsg, setErrorMsg] = useState('');
 
+  const { navigate } = useNavigation();
+  
+  function handleNavigateToItemsRegister(){
+    if(!age || !name || !gender){
+      return alert("Missing info")
+    }
+    console.log(gender);
+    
+    navigate('Items', {name, gender, age, location});
+  }
+  
   useEffect(() => {
     (async () => {
       let { status } = await Location.requestPermissionsAsync();
@@ -27,15 +39,6 @@ export default function UserRegister(){
       
     })();
   }, []);
-
-  const { navigate } = useNavigation();
-
-  function handleNavigateToItemsRegister(){
-    if(!age || !name || !gender){
-      return alert("Missing info")
-    }
-    navigate('Items');
-  }
 
   return(
     <View style={styles.container}>
@@ -57,10 +60,19 @@ export default function UserRegister(){
         <View style={styles.genderAgeContainer}>
           <View style={{width: '45%'}}>
             <Text style={styles.label}>Gender</Text>
-            <TextInput 
-              value={gender}
-              onChangeText={setGender}
-              style={[styles.textInput, styles.genderText]} />
+            <View 
+              style={styles.genderText}
+              >
+                <Picker
+                  style={[styles.genderText, {marginTop: -1}]}
+                  selectedValue={gender}
+                  onValueChange={genderValue => setGender(`${genderValue}`)}
+                >
+                  <Picker.Item value="M" label="Male" />
+                  <Picker.Item value="F" label="Female" />
+
+                </Picker>
+              </View>
           </View>
 
           <View style={{width: '45%'}}>
