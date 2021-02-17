@@ -1,9 +1,13 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import { View, Animated, StyleSheet, TouchableWithoutFeedback } from 'react-native';
 import { AntDesign, Ionicons, Feather } from '@expo/vector-icons'
-import { ScaleFromCenterAndroid } from '@react-navigation/stack/lib/typescript/src/TransitionConfigs/TransitionPresets';
 
-export default function FabButton() {
+interface FabProp {
+  qrCode: Function,
+  addContact: Function
+}
+
+export default function FabButton({qrCode, addContact}: FabProp) {
   const animation = useRef(new Animated.Value(0)).current;
   const [isOpen, setOpen] = useState(false);
 
@@ -62,7 +66,7 @@ export default function FabButton() {
 
   return(
     <View style={styles.container}>
-      <TouchableWithoutFeedback>
+      <TouchableWithoutFeedback onPress={() => qrCode()}>
         <Animated.View style={[styles.button, styles.submenu, qrStyle]}>
           <AntDesign name="qrcode" size={24} color="#000" />
         </Animated.View>
@@ -74,7 +78,7 @@ export default function FabButton() {
         </Animated.View>
       </TouchableWithoutFeedback>
 
-      <TouchableWithoutFeedback>
+      <TouchableWithoutFeedback onPress={() => addContact()}>
         <Animated.View style={[styles.button, styles.submenu, addUserStyle]}>
           <Ionicons name="person-add-outline" size={20} color="#000" />
         </Animated.View>

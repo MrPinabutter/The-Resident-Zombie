@@ -5,7 +5,9 @@ import { createStackNavigator } from '@react-navigation/stack';
 import Login from '../pages/Login';
 import UserRegister from '../pages/UserRegister';
 import ItemRegister from '../pages/ItemsRegister';
-import Landing from '../pages/Landing'
+import Landing from '../pages/Landing';
+import Trade from '../pages/Trade';
+import QrCam from '../pages/QrReader';
 
 const { Navigator, Screen } = createStackNavigator();
 
@@ -17,6 +19,8 @@ function AppStack() {
         <Screen name="Register" component={UserRegister} />
         <Screen name="Items" component={ItemRegister} />
         <Screen name="Landing" component={Landing} />
+        <Screen name="Trade" component={Trade} />
+        <Screen name="QrCam" component={QrCam} />
       </Navigator>
     </NavigationContainer> 
   );
