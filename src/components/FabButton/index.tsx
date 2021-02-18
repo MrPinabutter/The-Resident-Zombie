@@ -4,7 +4,7 @@ import { AntDesign, Ionicons, Feather } from '@expo/vector-icons'
 
 interface FabProp {
   qrCode: Function,
-  addContact: Function
+  addContact: Function,
 }
 
 export default function FabButton({qrCode, addContact}: FabProp) {

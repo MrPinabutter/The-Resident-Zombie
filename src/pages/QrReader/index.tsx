@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Text, View, StyleSheet, Button } from 'react-native';
 import { BarCodeScanner } from 'expo-barcode-scanner';
+import api from '../../services/api';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useNavigation } from '@react-navigation/native';
 
-export default function App() {
+export default function QrScanner() {
   const [hasPermission, setHasPermission] = useState(false);
   const [scanned, setScanned] = useState(false);
 
@@ -15,9 +18,38 @@ export default function App() {
 
   const handleBarCodeScanned = ({ data }: any) => {
     setScanned(true);
-    alert(`Bar code with type and data ${data} has been scanned!`);
-    
+    handleAddFriend(data);
   };
+
+  const { navigate } = useNavigation()
+  
+  function handleNavigateToLanding(){
+    
+    navigate('Landing')
+  }
+
+  async function handleAddFriend(id: string) {
+    await api.get(`api/people/${id}`).then(res => {
+      const friend = {id: res.data.id, name: res.data.name}
+      async function store(){
+        await AsyncStorage.getItem('@Friends')
+          .then((json) => {
+            const c = json ? JSON.parse(json) : [];
+            
+            if(c.find((contact:any) => contact.id === id)) return
+            
+            c.push(friend);
+            
+            AsyncStorage.setItem('@Friends', JSON.stringify(c));
+
+          }).then(() => handleNavigateToLanding());
+        }
+        store()
+    }).catch(erro => {
+      alert('Friend not found, try again');
+    })
+  }
+        
 
   if (hasPermission === null) {
     return <Text>Requesting for camera permission</Text>;

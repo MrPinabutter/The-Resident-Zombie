@@ -5,13 +5,30 @@ import Swipeable from 'react-native-gesture-handler/Swipeable';
 import warn from '../../assets/icons/warn.png';
 import trash from '../../assets/icons/trash.png';
 import trade from '../../assets/icons/trade.png';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { RectButton } from 'react-native-gesture-handler';
 
 interface CardProps {
   name: string,
-  id: string
+  id: string,
+  setContacts: Function
 }
 
-export default function ContactCard({name, id}: CardProps) {
+export default function ContactCard({name, id, setContacts}: CardProps) {
+  function findIdx(contacts: CardProps){
+    return contacts.id === id;
+  }
+
+
+  async function handleDeleteContact() {
+    await AsyncStorage.getItem('@Friends')
+      .then((json) => {
+        const c = json ? JSON.parse(json) : [];
+        c.splice(c.findIndex(findIdx), 1);
+        setContacts(c)        
+        AsyncStorage.setItem('@Friends', JSON.stringify(c));
+      });
+  }
   
   const LeftAction = () => {
     return (
@@ -24,9 +41,9 @@ export default function ContactCard({name, id}: CardProps) {
   const RightAction = () => {
     return (
       <View style={{flexDirection: 'row'}}>
-        <View style={[styles.swipeRight, {backgroundColor: '#BD1A2A', borderTopEndRadius: 0, borderBottomEndRadius: 0}]}>
+        <RectButton onPress={handleDeleteContact} style={[styles.swipeRight, {backgroundColor: '#BD1A2A', borderTopEndRadius: 0, borderBottomEndRadius: 0}]}>
           <Image source={trash} style={{width: 20, height: 20}}/>
-        </View>
+        </RectButton>
         <View style={[styles.swipeRight, {backgroundColor: '#2CD85C'}]}>
           <Image source={trade} style={{width: 24, height: 24}}/>
         </View>

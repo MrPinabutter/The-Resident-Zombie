@@ -87,6 +87,14 @@ const styles = StyleSheet.create({
     marginTop: 30,
     justifyContent: 'center',
     alignItems: 'center'
+  },
+
+  textModal: {
+    color: '#25005E', 
+    fontSize: 24, 
+    paddingLeft: 0, 
+    marginBottom: 12, 
+    textAlign: 'center'
   }
 });
 
