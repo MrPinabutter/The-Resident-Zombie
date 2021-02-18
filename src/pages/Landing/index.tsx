@@ -1,61 +1,85 @@
 import React, { useContext, useEffect, useState } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { View, Text, Image, ScrollView, TouchableOpacity } from 'react-native';
+import { RectButton, TextInput } from 'react-native-gesture-handler';
 import { useNavigation } from '@react-navigation/native';
-import Modal from 'react-native-modal'
-
-import backpack from '../../assets/icons/backpack.png';
-import gasMask from '../../assets/icons/gas-mask.png';
-import ContactCard from '../../components/ContactCard';
-import FabButton from '../../components/FabButton';
 import api from '../../services/api';
+import Modal from 'react-native-modal'
+import QRCode from 'react-native-qrcode-svg';
+import FabButton from '../../components/FabButton';
+
+// IMAGES
+import gasMask from '../../assets/icons/gas-mask.png';
+import backpack from '../../assets/icons/backpack.png';
+import ContactCard from '../../components/ContactCard';
+
+// ICONS
+import aid from '../../assets/items/aid.png'
+import ak47 from '../../assets/items/ak.png'
+import soup from '../../assets/items/soup.png'
+import water from '../../assets/items/water.png'
 
 import styles from './styles';
-
-import QRCode from 'react-native-qrcode-svg';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { TextInput } from 'react-native-gesture-handler';
-
 interface ContactProp{
   name: string,
   id: string,
 }
 
+interface ItemProp {
+  item: {
+    name: string,
+    
+  },
+  quantity: number
+}
+
 export default function Landing(){
-  const [qrViewModal, setQrViewModal] = useState(false);
-  const [inventoryModal, setInventoryModal] = useState(false);
-  const [addFriendModal, setAddFriendModal] = useState(false);
-  const [updateLocationModal, setUpdateLocationModal] = useState(false) ;
+  // COMMON HOOKS
   const [id, setId] = useState('');
   const [friendId, setFriendId] = useState('');
   const [name, setName] = useState('');
   const [contacts, setContacts] = useState([{}] as any);
+  const [inventory, setInventory] = useState([])
+
+  // MODAL HOOKS
+  const [qrViewModal, setQrViewModal] = useState(false);
+  const [inventoryModal, setInventoryModal] = useState(false);
+  const [addFriendModal, setAddFriendModal] = useState(false);
+  const [updateLocationModal, setUpdateLocationModal] = useState(false);
 
   const { navigate } = useNavigation();
 
   useEffect(() => {
-    async function load(){
+    async function loadProfile(){
       await AsyncStorage.getItem('USER_ID').then(id => {
         api.get(`api/people/${id}`).then(res => {
-          setId(res.data.id)
+          setId(res.data.id)  
           setName(res.data.name)
         }).catch(erro => {
           console.log(erro);
         })
       })
     }
-    load()
-  }, [])
 
-  useEffect(() => {
-    async function load(){
+    async function loadInvetory(){
+      await api.get(`/api/people/${id}/properties.json`)
+      .then(res => {
+        setInventory(res.data)
+        console.log(res.data);
+      })
+    }
+    
+    async function loadFriends(){
       await AsyncStorage.getItem('@Friends')
       .then((json) => {
         const c = json ? JSON.parse(json) : [];
-        console.log(c);
         setContacts(c);
       })
     }
-    load()
+
+    loadProfile();
+    loadInvetory();
+    loadFriends();
   }, [])
 
   function handleNavigateToQrScanner(){
@@ -94,9 +118,9 @@ export default function Landing(){
           <Text style={styles.nameText}>{name}</Text>
           <Text style={styles.idText}>#{id}</Text>
         </View>
-        <View style={styles.inventory}>
+        <RectButton  onPress={() => setInventoryModal(true)} style={styles.inventory}>
           <Image source={backpack} style={{width: 35, height:35}} />
-        </View>
+        </RectButton>
       </View>
       <View style={styles.labelContainer}>
         <Text style={styles.label}>Contacts</Text>
@@ -116,13 +140,15 @@ export default function Landing(){
         <View style={styles.modal}>
           <Text style={[styles.label, {color: '#25005E', fontSize: 24, paddingLeft: 0, marginBottom: 12}]}>Share this code to make friends</Text>
           <Text style={[styles.label, {color: '#51AB11', fontSize: 16, paddingLeft: 0, marginBottom: 8}]}>#{id}</Text>
+          
           <QRCode
             value={id}
             size={200}
           />
-            <TouchableOpacity onPress={() => setQrViewModal(false)} style={styles.buttonModal}>
-                <Text style={[styles.statusText, {fontSize: 35}]}>Close</Text>
-            </TouchableOpacity>
+
+          <TouchableOpacity onPress={() => setQrViewModal(false)} style={styles.buttonModal}>
+              <Text style={[styles.statusText, {fontSize: 35}]}>Close</Text>
+          </TouchableOpacity>
         </View>
       </Modal>
       
@@ -130,15 +156,40 @@ export default function Landing(){
         isVisible={inventoryModal}
       >
         <View style={styles.modal}>
-          <Text style={[styles.label, {color: '#25005E', fontSize: 24, paddingLeft: 0, marginBottom: 12}]}>Share this code to make friends</Text>
-          <Text style={[styles.label, {color: '#51AB11', fontSize: 16, paddingLeft: 0, marginBottom: 8}]}>#sadfuhasdifuasdfa-nsdfoasjdf-dfdhafo</Text>
-          <QRCode
-            value="347e9f45-b06a-4083-827d-049058b4b6fe"
-            size={200}
-          />
-            <TouchableOpacity onPress={() => setInventoryModal(false)} style={styles.buttonModal}>
-                <Text style={[styles.statusText, {fontSize: 35}]}>Close</Text>
-            </TouchableOpacity>
+          <Text style={[styles.label, {color: '#25005E', fontSize: 24, paddingLeft: 0, marginBottom: 12}]}>Your items</Text>
+          
+          <View style={{width: '80%', height: 300, justifyContent: 'center', alignItems: 'center', flexDirection: 'row', flexWrap: 'wrap'}}>
+            <View style={styles.itemInventory}>
+              <Image source={aid} style={{width: 40, height: 40}} />
+              <Text style={[styles.label, {color: '#000', fontSize: 18, paddingLeft: 0, marginBottom: 12}]}>Quantity: 
+                {inventory.find((i:ItemProp) => i.item.name === 'Fist Aid Pouch') ? inventory.find((i:ItemProp) => i.item.name === 'Fist Aid Pouch')?.quantity : 0 }
+              </Text>
+            </View> 
+
+            <View style={styles.itemInventory}>
+              <Image source={ak47} style={{width: 40, height: 40}} />
+              <Text style={[styles.label, {color: '#000', fontSize: 18, paddingLeft: 0, marginBottom: 12}]}>Quantity:
+                {inventory.find((i:ItemProp) => i.item.name === 'AK47') ? inventory.find((i:ItemProp) => i.item.name === 'AK47')?.quantity : 0 }
+              </Text>
+            </View> 
+            
+            <View style={styles.itemInventory}>
+              <Image source={water} style={{width: 40, height: 40}} />
+              <Text style={[styles.label, {color: '#000', fontSize: 18, paddingLeft: 0, marginBottom: 12}]}>Quantity:
+                {inventory.find((i:ItemProp) => i.item.name === 'Fiji Water') ? inventory.find((i:ItemProp) => i.item.name === 'Fiji Water')?.quantity : 0 }
+              </Text>
+            </View> 
+            <View style={styles.itemInventory}>
+              <Image source={soup} style={{width: 40, height: 40}} />
+              <Text style={[styles.label, {color: '#000', fontSize: 18, paddingLeft: 0, marginBottom: 12}]}>Quantity:
+                {inventory.find((i:ItemProp) => i.item.name === 'Campbell Soup') ? inventory.find((i:ItemProp) => i.item.name === 'Campbell Soup')?.quantity : 0 }
+              </Text>
+            </View> 
+          </View>
+
+          <TouchableOpacity onPress={() => setInventoryModal(false)} style={styles.buttonModal}>
+              <Text style={[styles.statusText, {fontSize: 35}]}>Close</Text>
+          </TouchableOpacity>
         </View>
       </Modal>
       

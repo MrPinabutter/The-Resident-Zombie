@@ -95,6 +95,16 @@ const styles = StyleSheet.create({
     paddingLeft: 0, 
     marginBottom: 12, 
     textAlign: 'center'
+  },
+
+  itemInventory: {
+    margin: '10%', 
+    justifyContent: 'center', 
+    alignItems: 'center', 
+    padding: 6, 
+    backgroundColor: '#B6B669', 
+    borderRadius: 6,
+    paddingBottom: 0,
   }
 });
 
