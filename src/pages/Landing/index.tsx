@@ -49,25 +49,28 @@ export default function Landing(){
   
   const { navigate } = useNavigation();
 
-  async function loadInvetory(){
+  async function loadInvetory(id:any){
     await api.get(`/api/people/${id}/properties.json`)
     .then(res => {
+      console.log(id);
       setInventory(res.data)
       console.log(res.data);
+    }).catch(e => {
+      console.log(e);
     })
   }
 
   useEffect(() => {
     async function loadProfile(){
       await AsyncStorage.getItem('USER_ID').then(id => {
+        console.log(id);
         api.get(`api/people/${id}`).then(res => {
           setId(res.data.id)  
           setName(res.data.name)
+          loadInvetory(id); 
         }).catch(erro => {
           console.log(erro);
         })
-      }).then(() => {
-        loadInvetory();
       })
     }
     
@@ -81,13 +84,6 @@ export default function Landing(){
 
     loadProfile();
     loadFriends();
-  }, [])
-  
-  useEffect(() => {
-    loadInvetory().catch(e => {
-      console.log(e);
-      
-    });
   }, [])
 
   function handleNavigateToQrScanner(){
@@ -170,7 +166,7 @@ export default function Landing(){
             <View style={styles.itemInventory}>
               <Image source={aid} style={{width: 40, height: 40}} />
               <Text style={[styles.label, {color: '#000', fontSize: 18, paddingLeft: 0, marginBottom: 12}]}>Quantity: 
-                {inventory.find((i:ItemProp) => i.item.name === 'Fist Aid Pouch') ? inventory.find((i:ItemProp) => i.item.name === 'Fist Aid Pouch')?.quantity : 0 }
+                {inventory.find((i:ItemProp) => i.item.name === 'First Aid Pouch') ? inventory.find((i:ItemProp) => i.item.name === 'First Aid Pouch')?.quantity : 0 }
               </Text>
             </View> 
 
