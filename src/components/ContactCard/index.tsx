@@ -7,6 +7,7 @@ import trash from '../../assets/icons/trash.png';
 import trade from '../../assets/icons/trade.png';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { RectButton } from 'react-native-gesture-handler';
+import { useNavigation } from '@react-navigation/native';
 
 interface CardProps {
   name: string,
@@ -15,10 +16,15 @@ interface CardProps {
 }
 
 export default function ContactCard({name, id, setContacts}: CardProps) {
+  const { navigate } = useNavigation();
+
+  function handleNavigateToTrade(){
+    navigate('Trade')
+  }
+
   function findIdx(contacts: CardProps){
     return contacts.id === id;
   }
-
 
   async function handleDeleteContact() {
     await AsyncStorage.getItem('@Friends')
@@ -44,9 +50,9 @@ export default function ContactCard({name, id, setContacts}: CardProps) {
         <RectButton onPress={handleDeleteContact} style={[styles.swipeRight, {backgroundColor: '#BD1A2A', borderTopEndRadius: 0, borderBottomEndRadius: 0}]}>
           <Image source={trash} style={{width: 20, height: 20}}/>
         </RectButton>
-        <View style={[styles.swipeRight, {backgroundColor: '#2CD85C'}]}>
+        <RectButton onPress={handleNavigateToTrade} style={[styles.swipeRight, {backgroundColor: '#2CD85C'}]}>
           <Image source={trade} style={{width: 24, height: 24}}/>
-        </View>
+        </RectButton>
       </View>
     );
   };
