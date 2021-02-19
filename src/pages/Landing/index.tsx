@@ -46,8 +46,16 @@ export default function Landing(){
   const [inventoryModal, setInventoryModal] = useState(false);
   const [addFriendModal, setAddFriendModal] = useState(false);
   const [updateLocationModal, setUpdateLocationModal] = useState(false);
-
+  
   const { navigate } = useNavigation();
+
+  async function loadInvetory(){
+    await api.get(`/api/people/${id}/properties.json`)
+    .then(res => {
+      setInventory(res.data)
+      console.log(res.data);
+    })
+  }
 
   useEffect(() => {
     async function loadProfile(){
@@ -58,14 +66,8 @@ export default function Landing(){
         }).catch(erro => {
           console.log(erro);
         })
-      })
-    }
-
-    async function loadInvetory(){
-      await api.get(`/api/people/${id}/properties.json`)
-      .then(res => {
-        setInventory(res.data)
-        console.log(res.data);
+      }).then(() => {
+        loadInvetory();
       })
     }
     
@@ -78,8 +80,14 @@ export default function Landing(){
     }
 
     loadProfile();
-    loadInvetory();
     loadFriends();
+  }, [])
+  
+  useEffect(() => {
+    loadInvetory().catch(e => {
+      console.log(e);
+      
+    });
   }, [])
 
   function handleNavigateToQrScanner(){
