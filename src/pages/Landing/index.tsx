@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { View, Text, Image, ScrollView, TouchableOpacity } from 'react-native';
 import { RectButton, TextInput } from 'react-native-gesture-handler';

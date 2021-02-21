@@ -3,7 +3,7 @@ import { Text, View, StyleSheet, Button } from 'react-native';
 import { BarCodeScanner } from 'expo-barcode-scanner';
 import api from '../../services/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, StackActions } from '@react-navigation/native';
 
 export default function QrScanner() {
   const [hasPermission, setHasPermission] = useState(false);
@@ -21,11 +21,11 @@ export default function QrScanner() {
     handleAddFriend(data);
   };
 
-  const { navigate } = useNavigation()
+  const pushAction = StackActions.push('Landing')
+  const { dispatch } = useNavigation()
   
   function handleNavigateToLanding(){
-    
-    navigate('Landing')
+    dispatch(pushAction)
   }
 
   async function handleAddFriend(id: string) {
