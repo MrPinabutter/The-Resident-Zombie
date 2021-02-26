@@ -38,7 +38,7 @@ On the bottom-left side you find a Fab Button which after click it releases 3 ac
   <li> Add new contact </li>
 </ul>
 Every action opens a modal with yours respectives contents. 
-Are some things unfineshed, like, after add a new friend the contacts page don't update the app, you have to restart to show up. For fix that, i would use Context hooks for finished correctly. And the TradePage and Report Infected is not yet connected to API.
+Are some things unfineshed, like, the TradePage is not conected to API, still need to create loading screens, create update location modal, report infected, update user and refactor the LandingPage.
 
 ## Images
 All the images and logos in the app has geted in Flaticon and Pixabay

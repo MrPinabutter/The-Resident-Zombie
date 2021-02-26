@@ -28,7 +28,6 @@ interface ContactProp{
 interface ItemProp {
   item: {
     name: string,
-    
   },
   quantity: number
 }
@@ -39,7 +38,8 @@ export default function Landing(){
   const [friendId, setFriendId] = useState('');
   const [name, setName] = useState('');
   const [contacts, setContacts] = useState([{}] as any);
-  const [inventory, setInventory] = useState([])
+  const [inventory, setInventory] = useState<Array<ItemProp>>([]);
+  const [isLoaded, setLoaded] = useState(false)
 
   // MODAL HOOKS
   const [qrViewModal, setQrViewModal] = useState(false);
@@ -52,10 +52,19 @@ export default function Landing(){
   async function loadInvetory(id:any){
     await api.get(`/api/people/${id}/properties.json`)
     .then(res => {
-      console.log(id);
-      setInventory(res.data)
-      console.log(res.data);
-    }).catch(e => {
+      const { data } = res
+      
+      const it: Array<ItemProp> = []
+      
+      data.map((i: ItemProp) => {
+        it.push({item: i.item, quantity: i.quantity})
+      })
+      
+      setInventory(it)
+
+      console.log(data);
+      
+    }).then(() => setLoaded(true)).catch(e => {
       console.log(e);
     })
   }
@@ -113,6 +122,8 @@ export default function Landing(){
     })
   }
 
+
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -161,35 +172,35 @@ export default function Landing(){
       >
         <View style={styles.modal}>
           <Text style={[styles.label, {color: '#25005E', fontSize: 24, paddingLeft: 0, marginBottom: 12}]}>Your items</Text>
-          
+
           <View style={{width: '80%', height: 300, justifyContent: 'center', alignItems: 'center', flexDirection: 'row', flexWrap: 'wrap'}}>
             <View style={styles.itemInventory}>
               <Image source={aid} style={{width: 40, height: 40}} />
               <Text style={[styles.label, {color: '#000', fontSize: 18, paddingLeft: 0, marginBottom: 12}]}>Quantity: 
-                {inventory.find((i:ItemProp) => i.item.name === 'First Aid Pouch') ? inventory.find((i:ItemProp) => i.item.name === 'First Aid Pouch')?.quantity : 0 }
+                {isLoaded ? inventory.find(i => i.item.name === 'First Aid Pouch')?.quantity || 0 : 0}
               </Text>
             </View> 
 
             <View style={styles.itemInventory}>
               <Image source={ak47} style={{width: 40, height: 40}} />
               <Text style={[styles.label, {color: '#000', fontSize: 18, paddingLeft: 0, marginBottom: 12}]}>Quantity:
-                {inventory.find((i:ItemProp) => i.item.name === 'AK47') ? inventory.find((i:ItemProp) => i.item.name === 'AK47')?.quantity : 0 }
+                {isLoaded ? inventory.find(i => i.item.name === 'AK47')?.quantity || 0 : 0}
               </Text>
             </View> 
             
             <View style={styles.itemInventory}>
               <Image source={water} style={{width: 40, height: 40}} />
               <Text style={[styles.label, {color: '#000', fontSize: 18, paddingLeft: 0, marginBottom: 12}]}>Quantity:
-                {inventory.find((i:ItemProp) => i.item.name === 'Fiji Water') ? inventory.find((i:ItemProp) => i.item.name === 'Fiji Water')?.quantity : 0 }
+                {isLoaded ? inventory.find(i => i.item.name === 'Fiji Water')?.quantity || 0 : 0}
               </Text>
             </View> 
             <View style={styles.itemInventory}>
               <Image source={soup} style={{width: 40, height: 40}} />
               <Text style={[styles.label, {color: '#000', fontSize: 18, paddingLeft: 0, marginBottom: 12}]}>Quantity:
-                {inventory.find((i:ItemProp) => i.item.name === 'Campbell Soup') ? inventory.find((i:ItemProp) => i.item.name === 'Campbell Soup')?.quantity : 0 }
+                {isLoaded ? inventory.find(i => i.item.name === 'Campbell Soup')?.quantity || 0 : 0}
               </Text>
             </View> 
-          </View>
+          </View> 
 
           <TouchableOpacity onPress={() => setInventoryModal(false)} style={styles.buttonModal}>
               <Text style={[styles.statusText, {fontSize: 35}]}>Close</Text>
